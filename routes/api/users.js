@@ -5,7 +5,7 @@ const gravatar = require('gravatar');
 const jwt = require('jsonwebtoken');
 const config = require('config');
 
-const User = require('../../models/Users');
+const User = require('../../models/User');
 
 const { check, validationResult } = require('express-validator');
 
@@ -60,7 +60,9 @@ router.post(
 
       //Returnjsonwebtoken (next video)
       const payload = {
-        id: user.id,
+        user: {
+          id: user.id,
+        },
       };
 
       jwt.sign(
