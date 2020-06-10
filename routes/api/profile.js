@@ -3,6 +3,7 @@ const router = express.Router();
 const auth = require('../../middleware/auth');
 const Profile = require('../../models/Profile');
 const User = require('../../models/User');
+const url = require('url');
 
 const { check, validationResult } = require('express-validator');
 
@@ -13,7 +14,7 @@ router.get('/me', auth, async (req, res) => {
   try {
     const profile = await Profile.findOne({
       user: req.user.id,
-    }).populate('user', ['name', 'avatar']);
+    }).populate('user', ['name', 'avatar']); // pour l'affichage uniquement? user va avoir des sous categ name et avatar
 
     if (!profile) {
       return res.status(400).json({ msg: 'There is no Profile' });
@@ -51,9 +52,12 @@ router.post(
       skills,
       bio,
       githubusername,
+      youtube,
+      twitter,
+      facebook,
+      linkedin,
+      instagram,
     } = req.body;
-
-    const { youtube, twitter, facebook, linkedin, instagram } = req.body.social;
 
     //Build profile object
     const profileFields = {};
@@ -73,6 +77,7 @@ router.post(
     }
     if (skills) {
       profileFields.skills = skills.split(',').map((skills) => skills.trim());
+      //String --> tableau (séparation par  ",") --> enlève les espaces avant après
     }
     if (bio) {
       profileFields.bio = bio;
@@ -109,7 +114,7 @@ router.post(
           { $set: profileFields },
           { new: true }
         ); // 1er param pour trouver, 2ème pour update, 3ème pour renvoyer le nouveau profile créé
-        res.json(profile);
+        return res.json(profile);
       }
 
       //Create Profile (si existe pas)
@@ -122,5 +127,64 @@ router.post(
     }
   }
 );
+
+// @route            GET API/profile/
+// @description      Get all profiles
+// @access           Public
+router.get('/', async (req, res) => {
+  try {
+    const profiles = await Profile.find().populate('user', ['name', 'avatar']); // pour l'affichage uniquement? user va avoir des sous categ name et avatar
+
+    if (!profiles) {
+      return res.status(400).json({ msg: 'There is no Profile' });
+    }
+    return res.json(profiles);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+});
+
+// @route            GET API/profile/user/:user_id
+// @description      Get profile by user ID
+// @access           Public
+router.get('/user/:user_id', async (req, res) => {
+  try {
+    const profile = await Profile.findOne({
+      user: req.params.user_id,
+    }).populate('user', ['name', 'avatar']); // pour l'affichage uniquement? user va avoir des sous categ name et avatar
+
+    if (!profile) {
+      return res.status(400).json({ msg: 'Profile not found' });
+    }
+    res.json(profile);
+  } catch (err) {
+    console.error(err.message);
+    if (err.kind === 'ObjectId') {
+      //Cas où le :user_id n'a pas le bon format (ce n'est pas une erreur de server)
+      return res.status(400).json({ msg: 'Profile not found' });
+    }
+    res.status(500).send('Server error');
+  }
+});
+
+// @route            DELETE API/profile/
+// @description      delete profile & user
+// @access           Private
+router.delete('/', auth, async (req, res) => {
+  try {
+    //@to do : delete posts from user
+
+    //delete profile
+    await Profile.findOneAndDelete({ user: req.user.id });
+
+    //delete user
+    await User.findOneAndDelete({ _id: req.user.id });
+    res.json({ msg: 'User deleted' });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+});
 
 module.exports = router;
