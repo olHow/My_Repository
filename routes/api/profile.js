@@ -4,6 +4,8 @@ const auth = require('../../middleware/auth');
 const Profile = require('../../models/Profile');
 const User = require('../../models/User');
 
+const { check, validationResult } = require('express-validator');
+
 // @route            GET API/profile/me
 // @description      Get current users profile
 // @access           Private
@@ -19,8 +21,106 @@ router.get('/me', auth, async (req, res) => {
     return res.json(profile);
   } catch (err) {
     console.error(err.message);
-    res.status(400).send('Server error');
+    res.status(500).send('Server error');
   }
 });
+
+// @route            POST API/profile
+// @description      create or update users profile
+// @access           Private
+router.post(
+  '/',
+  [
+    auth,
+    [
+      check('status', 'Please enter a status').not().isEmpty(),
+      check('skills', 'Please enter skills').not().isEmpty(),
+    ],
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const {
+      company,
+      website,
+      location,
+      status,
+      skills,
+      bio,
+      githubusername,
+    } = req.body;
+
+    const { youtube, twitter, facebook, linkedin, instagram } = req.body.social;
+
+    //Build profile object
+    const profileFields = {};
+
+    profileFields.user = req.user.id;
+    if (company) {
+      profileFields.company = company;
+    }
+    if (website) {
+      profileFields.website = website;
+    }
+    if (location) {
+      profileFields.location = location;
+    }
+    if (status) {
+      profileFields.status = status;
+    }
+    if (skills) {
+      profileFields.skills = skills.split(',').map((skills) => skills.trim());
+    }
+    if (bio) {
+      profileFields.bio = bio;
+    }
+    if (githubusername) {
+      profileFields.githubusername = githubusername;
+    }
+
+    //Build social object
+    profileFields.social = {};
+    if (youtube) {
+      profileFields.social.youtube = youtube;
+    }
+    if (twitter) {
+      profileFields.social.twitter = twitter;
+    }
+    if (facebook) {
+      profileFields.social.facebook = facebook;
+    }
+    if (linkedin) {
+      profileFields.social.linkedin = linkedin;
+    }
+    if (instagram) {
+      profileFields.social.instagram = instragram;
+    }
+
+    try {
+      let profile = await Profile.findOne({ user: req.user.id });
+
+      if (profile) {
+        //Update Profile (si existe)
+        profile = await Profile.findOneAndUpdate(
+          { user: req.user.id },
+          { $set: profileFields },
+          { new: true }
+        ); // 1er param pour trouver, 2ème pour update, 3ème pour renvoyer le nouveau profile créé
+        res.json(profile);
+      }
+
+      //Create Profile (si existe pas)
+      profile = new Profile(profileFields);
+      await profile.save();
+      res.json(profile);
+    } catch (err) {
+      console.error(err.message);
+      res.status(400).json({ errors: errors.array() });
+    }
+  }
+);
 
 module.exports = router;
