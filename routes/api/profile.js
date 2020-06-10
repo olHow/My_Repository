@@ -169,7 +169,7 @@ router.get('/user/:user_id', async (req, res) => {
 });
 
 // @route            DELETE API/profile/
-// @description      delete profile & user
+// @description      delete profile & user & (posts)
 // @access           Private
 router.delete('/', auth, async (req, res) => {
   try {
@@ -181,6 +181,78 @@ router.delete('/', auth, async (req, res) => {
     //delete user
     await User.findOneAndDelete({ _id: req.user.id });
     res.json({ msg: 'User deleted' });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+});
+
+// @route            PUT API/profile/experience
+// @description      Add profile experience
+// @access           Private
+router.put(
+  '/experience',
+  [
+    auth,
+    check('title', 'Title is required').not().isEmpty(),
+    check('company', 'Company is required').not().isEmpty(),
+    check('from', 'From date is required').not().isEmpty(),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const {
+      title,
+      company,
+      location,
+      from,
+      to,
+      current,
+      description,
+    } = req.body;
+
+    const newExp = {
+      title, // revient à écrire title: title qui va chercher la constante title du dessus qui vient du req.body
+      company,
+      location,
+      from,
+      to,
+      current,
+      description,
+    };
+
+    try {
+      const profile = await Profile.findOne({ user: req.user.id });
+      profile.experience.unshift(newExp);
+      await profile.save();
+      res.json({ profile });
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server error');
+    }
+  }
+);
+
+// @route            DELETE API/profile/experience/:exp_id
+// @description      delete profile experience
+// @access           Private
+router.delete('/experience/:exp_id', auth, async (req, res) => {
+  try {
+    const profile = await Profile.findOne({ user: req.user.id });
+    const indexToRemove = profile.experience
+      .map((item) => item.id)
+      .indexOf(req.params.exp_id);
+
+    if (indexToRemove !== -1) {
+      // pas dans le tuto. S'il trouve pas l'exp id dans le tableau (url bidon --> index = -1),
+      //, dans ce cas il efface pas le premier du tableau (ce qu'il se passe lorsqu'on splice(-1,1))
+      profile.experience.splice(indexToRemove, 1);
+    }
+    await profile.save();
+    res.send(profile);
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');
