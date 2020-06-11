@@ -3,7 +3,9 @@ const router = express.Router();
 const auth = require('../../middleware/auth');
 const Profile = require('../../models/Profile');
 const User = require('../../models/User');
-const url = require('url');
+//const url = require('url');
+const request = require('request');
+const config = require('config');
 
 const { check, validationResult } = require('express-validator');
 
@@ -330,6 +332,37 @@ router.delete('/education/:educ_id', auth, async (req, res) => {
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');
+  }
+});
+
+// @route            GET API/profile/github/:username
+// @description      get GitHub Repository
+// @access           Public
+
+router.get('/github/:username', (req, res) => {
+  try {
+    const options = {
+      uri: `http://api.github.com/users/${
+        req.params.username
+      }/repos?per_page=5&sort=created:asc&client_id=${config.get(
+        'githubClientId' //client id récupéré du site github en créant l'app. DIso sur config/default.json
+      )}&client_secret=${config.get('githubSecret')}}`, //idem que client id pour la clé secrete
+      method: 'GET',
+      headers: { 'user-agent': 'node.js' },
+    };
+    request(options, (error, response, body) => {
+      // grâce au module "request que l'on vient d'importer"
+      if (error) {
+        console.error(error);
+      }
+      if (response.statusCode !== 200) {
+        return res.status(404).json({ msg: 'No github Profile found' });
+      }
+      res.json(JSON.parse(body));
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
   }
 });
 
