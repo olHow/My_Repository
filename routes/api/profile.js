@@ -65,6 +65,7 @@ router.post(
     const profileFields = {};
 
     profileFields.user = req.user.id;
+
     if (company) {
       profileFields.company = company;
     }
