@@ -41,4 +41,67 @@ router.post(
   }
 );
 
+// @route            GET API/posts
+// @description      Get all post
+// @access           private
+
+router.get('/', auth, async (req, res) => {
+  try {
+    const posts = await Post.find().sort({ date: -1 });
+    if (!posts) {
+      return res.status(404).json({ msg: 'There is no Post' });
+    }
+    res.json(posts);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
+// @route            GET API/posts/:id
+// @description      Get a post by his ID
+// @access           private
+router.get('/:id', auth, async (req, res) => {
+  try {
+    const post = await Post.findById({ _id: req.params.id });
+    if (!post) {
+      return res.status(404).json({ msg: 'Post not found' });
+    }
+    res.json(post);
+  } catch (err) {
+    if (err.kind == 'ObjectId') {
+      return res.status(404).json({ msg: 'Post not found' });
+    }
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
+// @route            DELETE API/posts/:id
+// @description      delete a post by his ID
+// @access           private
+router.delete('/:id', auth, async (req, res) => {
+  try {
+    const post = await Post.findById({ _id: req.params.id });
+    if (!post) {
+      return res.status(404).json({ msg: 'Post not found' });
+    }
+    if (req.user.id !== post.user.toString()) {
+      //req.user.id est un string alors que post.user est un object ID.
+      //On vérifie que celui qui supprime le post est le propriétaire du post
+      return res
+        .status(401)
+        .json({ msg: 'No authorization to remove this post' });
+    }
+    await post.remove();
+    res.json({ msg: 'Post Removed' });
+  } catch (err) {
+    if (err.kind == 'ObjectId') {
+      return res.status(404).json({ msg: 'Post not found' });
+    }
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
 module.exports = router;
