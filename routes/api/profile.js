@@ -259,4 +259,78 @@ router.delete('/experience/:exp_id', auth, async (req, res) => {
   }
 });
 
+// @route            PUT API/profile/education
+// @description      Add profile education
+// @access           Private
+router.put(
+  '/education',
+  [
+    auth,
+    check('school', 'School is required').not().isEmpty(),
+    check('degree', 'Degree is required').not().isEmpty(),
+    check('fieldofstudy', 'Field of Study is required').not().isEmpty(),
+    check('from', 'From date is required').not().isEmpty(),
+    check('to', 'To date is required').not().isEmpty(),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const {
+      school,
+      degree,
+      fieldofstudy,
+      from,
+      to,
+      current,
+      description,
+    } = req.body;
+
+    const newEducation = {
+      school, // revient à écrire school: school qui va chercher la constante school du dessus qui vient du req.body
+      degree,
+      fieldofstudy,
+      from,
+      to,
+      current,
+      description,
+    };
+
+    try {
+      const profile = await Profile.findOne({ user: req.user.id });
+      profile.education.unshift(newEducation);
+      await profile.save();
+      res.json({ profile });
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server error');
+    }
+  }
+);
+
+// @route            DELETE API/profile/education/:educ_id
+// @description      delete profile education
+// @access           Private
+router.delete('/education/:educ_id', auth, async (req, res) => {
+  try {
+    const profile = await Profile.findOne({ user: req.user.id });
+    const indexToRemove = profile.education
+      .map((item) => item.id)
+      .indexOf(req.params.educ_id);
+
+    if (indexToRemove !== -1) {
+      // pas dans le tuto. S'il trouve pas l'exp id dans le tableau (url bidon --> index = -1),
+      //, dans ce cas il efface pas le premier du tableau (ce qu'il se passe lorsqu'on splice(-1,1))
+      profile.education.splice(indexToRemove, 1);
+    }
+    await profile.save();
+    res.send(profile);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+});
+
 module.exports = router;
