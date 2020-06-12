@@ -58,7 +58,7 @@ router.post(
           .json({ errors: [{ msg: 'Invalid credentials' }] });
       }
 
-      //Returnjsonwebtoken (next video)
+      //Returnjsonwebtoken
       const payload = {
         user: {
           id: user.id,
