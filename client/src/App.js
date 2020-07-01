@@ -5,6 +5,7 @@ import Landing from './components/layout/Landing';
 import Register from './components/auth/Register';
 import './App.css';
 import Login from './components/auth/Login';
+import Alert from './components/layout/Alert';
 
 //Redux
 import { Provider } from 'react-redux'; // Il faudra wraper tout avec le provider
@@ -13,11 +14,12 @@ import store from './store';
 const App = () => (
   <Provider store={store}>
     <Router>
-      <Fragment className='App'>
+      <Fragment>
         <Navbar />
         <Route exact path='/' component={Landing} />
         <section className='container'>
-          <Switch>
+          <Alert />
+          <Switch /*can only have route in it */>
             <Route exact path='/register' component={Register} />
             <Route exact path='/login' component={Login} />
           </Switch>

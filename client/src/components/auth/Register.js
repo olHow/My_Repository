@@ -1,8 +1,11 @@
 import React, { Fragment, useState } from 'react';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { setAlert } from '../../actions/alert';
+import PropTypes from 'prop-types';
 
-const Register = () => {
-  //équivalent à state = et setState = ... pour un formulaire
+const Register = ({ setAlert }) => {
+  //formData blabla, quivalent à state = et setState = ... pour un formulaire
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -18,7 +21,10 @@ const Register = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
     if (password !== password2) {
-      console.log('Password do not match');
+      setAlert('Password do not match', 'danger');
+      // msg puis alert type. Voir app.Css pour la def du alert-danger en couleur
+      // on aurait pu prendre props en param de Register et ici appeler props.setAlert.
+      //NB : func setAlert décrite  dans actions/alert cf imports
     } else {
       console.log('SUCCESS');
     }
@@ -83,4 +89,13 @@ const Register = () => {
   );
 };
 
-export default Register;
+Register.propType = {
+  setAlert: PropTypes.func.isRequired,
+};
+
+export default connect(null, { setAlert })(Register);
+//give us access to props.setAlert
+
+// each time we want to interact with redux : connect
+//1er paramètre de connect (optionnel) : State we want to map (from alert profile, etc...)
+//2nd paramètre (optionnel) : object avec l'action que l'on veut utiliser
