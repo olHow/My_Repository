@@ -94,8 +94,9 @@ Register.propType = {
 };
 
 export default connect(null, { setAlert })(Register);
-//give us access to props.setAlert
-
-// each time we want to interact with redux : connect
-//1er paramètre de connect (optionnel) : State we want to map (from alert profile, etc...)
+// connect permet de connecter le component à redux
+//1er paramètre de connect (optionnel) : les states dont on pourrait avoir besoin
 //2nd paramètre (optionnel) : object avec l'action que l'on veut utiliser
+//du coup cela s'appellera props.setAlert, avec props en fonction de register ici
+//ou tout en destructuré, avec setAlert partout, {setAlert} en fonction du register
+// NB : ici en plus l'alerte va déclencher un message visible, qu'on a configuré dans layout/Alert

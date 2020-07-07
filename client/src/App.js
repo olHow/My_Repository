@@ -8,7 +8,7 @@ import Login from './components/auth/Login';
 import Alert from './components/layout/Alert';
 
 //Redux
-import { Provider } from 'react-redux'; // Il faudra wraper tout avec le provider
+import { Provider } from 'react-redux'; // Il faudra wraper tout avec le provider pour connecter react et redux
 import store from './store';
 
 const App = () => (

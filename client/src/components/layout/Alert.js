@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 const Alert = ({ alerts }) =>
+  // alerts est le destructuré de props.alerts
   alerts !== null &&
   alerts.length > 0 &&
   alerts.map((alert) => (
@@ -18,6 +19,8 @@ Alert.propTypes = {
 const mapStateToProps = (state) => ({
   alerts: state.alert,
 });
+// mapStateToProps permet d'aller chercher les états dans redux et les utiliser en tant que props dans le component.
+// donne acces à props.alerts ou en destructuré, alerts
 
 export default connect(mapStateToProps)(Alert);
 // each time we want to interact with redux : connect
