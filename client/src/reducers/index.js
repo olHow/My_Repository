@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux';
 import alert from './alert';
 import auth from './auth';
+import profile from './profile';
 
 // Il s'agit ici d'un "root reducer".
 // L'idée ici est d'avoir un fichier unique qui rassemble tous les reducers (alert, auth ...) grace à la fonction combineReducers
@@ -9,4 +10,5 @@ import auth from './auth';
 export default combineReducers({
   alert,
   auth,
+  profile,
 });

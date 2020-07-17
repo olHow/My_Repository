@@ -6,6 +6,8 @@ import Register from './components/auth/Register';
 import './App.css';
 import Login from './components/auth/Login';
 import Alert from './components/layout/Alert';
+import Dashboard from './components/dashboard/Dashboard';
+import PrivateRoute from './routing/PrivateRoute';
 
 //Redux
 import { Provider } from 'react-redux'; // Il faudra wraper tout avec le provider pour connecter react et redux
@@ -33,6 +35,7 @@ const App = () => {
             <Switch /*can only have route in it */>
               <Route exact path='/register' component={Register} />
               <Route exact path='/login' component={Login} />
+              <PrivateRoute exact path='/dashboard' component={Dashboard} />
             </Switch>
           </section>
         </Fragment>
