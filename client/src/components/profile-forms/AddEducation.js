@@ -11,14 +11,24 @@ const AddEducation = ({ addEducation, history }) => {
     degree: '',
     fieldofstudy: '',
     from: '',
+    current: false,
     to: '',
+    description: '',
   };
 
   const [formData, setFormData] = useState(initialState);
 
   const [toDateDisabled, toggleDisabled] = useState(false);
 
-  const { school, degree, fieldofstudy, from, to } = formData;
+  const {
+    school,
+    degree,
+    fieldofstudy,
+    from,
+    current,
+    to,
+    description,
+  } = formData;
 
   const onChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -75,7 +85,21 @@ const AddEducation = ({ addEducation, history }) => {
             onChange={(e) => onChange(e)}
           />
         </div>
-        <div class='form-group'></div>
+        <div class='form-group'>
+          <p>
+            <input
+              type='checkbox'
+              name='current'
+              checked={current}
+              value={current}
+              onChange={(e) => {
+                setFormData({ ...formData, current: !current });
+                toggleDisabled(!toDateDisabled);
+              }}
+            />{' '}
+            Current Education
+          </p>
+        </div>
         <div class='form-group'>
           <h4>To Date</h4>
           <input
@@ -91,7 +115,9 @@ const AddEducation = ({ addEducation, history }) => {
             name='description'
             cols='30'
             rows='5'
-            placeholder='Job Description'
+            value={description}
+            onChange={(e) => onChange(e)}
+            placeholder='Program Description'
           ></textarea>
         </div>
         <input type='submit' class='btn btn-primary my-1' />

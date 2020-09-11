@@ -44,7 +44,6 @@ const EditProfile = ({
       twitter: loading || !profile.social ? '' : profile.twitter,
       facebook: loading || !profile.social ? '' : profile.facebook,
       linkedin: loading || !profile.social ? '' : profile.linkedin,
-      instagram: loading || !profile.social ? '' : profile.instagram,
       youtube: loading || !profile.social ? '' : profile.youtube,
       instagram: loading || !profile.social ? '' : profile.instagram,
     });

@@ -12,7 +12,7 @@ const AddExperience = ({ addExperience, history }) => {
     location: '',
     from: '',
     to: '',
-    current: '',
+    current: false,
     description: '',
   };
 
@@ -82,7 +82,6 @@ const AddExperience = ({ addExperience, history }) => {
             <input
               type='checkbox'
               name='current'
-              value=''
               checked={current}
               value={current}
               onChange={(e) => {
@@ -108,6 +107,8 @@ const AddExperience = ({ addExperience, history }) => {
             name='description'
             cols='30'
             rows='5'
+            value={description}
+            onChange={(e) => onChange(e)}
             placeholder='Job Description'
           ></textarea>
         </div>
