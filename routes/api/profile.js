@@ -273,7 +273,6 @@ router.put(
     check('degree', 'Degree is required').not().isEmpty(),
     check('fieldofstudy', 'Field of Study is required').not().isEmpty(),
     check('from', 'From date is required').not().isEmpty(),
-    check('to', 'To date is required').not().isEmpty(),
   ],
   async (req, res) => {
     const errors = validationResult(req);
