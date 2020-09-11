@@ -46,7 +46,6 @@ const EditProfile = ({
       linkedin: loading || !profile.social ? '' : profile.linkedin,
       instagram: loading || !profile.social ? '' : profile.instagram,
       youtube: loading || !profile.social ? '' : profile.youtube,
-      instagram: loading || !profile.social ? '' : profile.instagram,
     });
   }, [loading]);
 
