@@ -1,0 +1,6 @@
+{
+  "mongoURI": "mongodb+srv://oliv123:oliv123@devconnector-srjst.mongodb.net/test?retryWrites=true&w=majority",
+  "jwtSecret": "ThisIsTheJWTSecret123456",
+  "githubClientId": "Iv1.3e8432fd3234e798",
+  "githubSecret": "ab90319072786264c998c05088f9f70002eb4bf9"
+}
