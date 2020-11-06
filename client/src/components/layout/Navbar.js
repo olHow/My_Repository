@@ -9,7 +9,7 @@ const Navbar = ({ logout, auth: { isAuthenticated, loading } }) => {
     <ul>
       <li>
         <Link to='/profiles'>
-          <span className='hide-sm'> Heros </span>
+          <span className='hide-sm'> Heroes </span>
         </Link>
       </li>
       <li>
@@ -36,7 +36,7 @@ const Navbar = ({ logout, auth: { isAuthenticated, loading } }) => {
     <ul>
       <li>
         <Link to='/profiles'>
-          <span className='hide-sm'> Developers</span>
+          <span className='hide-sm'> Heroes </span>
         </Link>
       </li>
 
@@ -53,7 +53,7 @@ const Navbar = ({ logout, auth: { isAuthenticated, loading } }) => {
     <nav className='navbar bg-dark'>
       <h1>
         <Link to='/'>
-          <i className='fas fa-code'></i> DevConnector
+          <i className='fas fa-code'></i> SHConnector
         </Link>
       </h1>
       {!loading && (
